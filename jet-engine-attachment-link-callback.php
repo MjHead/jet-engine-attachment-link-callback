@@ -34,6 +34,20 @@ function jet_engine_get_attachment_file_link( $attachment_id, $display_name = 'f
 			$name = get_the_title( $attachment_id );
 			break;
 
+		case 'current_post_title':
+			$name = get_the_title( get_the_ID() );
+			break;
+
+		case 'parent_post_title':
+			$parent_id = wp_get_post_parent_id( $attachment_id );
+
+			if ( ! $parent_id ) {
+				$parent_id = get_the_ID();
+			}
+
+			$name = get_the_title( $parent_id );
+			break;
+
 		default:
 			$name = basename( $url );
 			break;
@@ -64,8 +78,10 @@ function jet_engine_add_attachment_link_callback_controls( $widget ) {
 			'description' => esc_html__( 'Select attachment name format to display', 'jet-engine' ),
 			'default'     => 'file_name',
 			'options'     => array(
-				'file_name'  => 'File name',
-				'post_title' => 'Attachment post title',
+				'file_name'          => 'File name',
+				'post_title'         => 'Attachment post title',
+				'current_post_title' => 'Current post title',
+				'parent_post_title'  => 'Parent post title',
 			),
 			'condition'   => array(
 				'dynamic_field_filter' => 'yes',
