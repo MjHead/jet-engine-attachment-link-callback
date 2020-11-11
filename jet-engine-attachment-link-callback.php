@@ -25,9 +25,9 @@ function jet_engine_add_attachment_link_callback( $callbacks ) {
 	return $callbacks;
 }
 
-function jet_engine_get_attachment_file_link( $attachment_id, $display_name = 'file_name' ) {
+function jet_engine_get_attachment_file_link( $attachment_id, $display_name = 'file_name', $label = '' ) {
 
-	$url  = wp_get_attachment_url( $attachment_id );
+	$url = wp_get_attachment_url( $attachment_id );
 
 	switch ( $display_name ) {
 		case 'post_title':
@@ -48,6 +48,10 @@ function jet_engine_get_attachment_file_link( $attachment_id, $display_name = 'f
 			$name = get_the_title( $parent_id );
 			break;
 
+		case 'custom':
+			$name = $label;
+			break;
+
 		default:
 			$name = basename( $url );
 			break;
@@ -61,6 +65,7 @@ function jet_engine_add_attachment_link_callback_args( $args, $callback, $settin
 
 	if ( 'jet_engine_get_attachment_file_link' === $callback ) {
 		$args[] = isset( $settings['jet_attachment_name'] ) ? $settings['jet_attachment_name'] : 'file_name';
+		$args[] = isset( $settings['jet_attachment_label'] ) ? $settings['jet_attachment_label'] : '';
 	}
 
 	return $args;
@@ -82,8 +87,25 @@ function jet_engine_add_attachment_link_callback_controls( $widget ) {
 				'post_title'         => 'Attachment post title',
 				'current_post_title' => 'Current post title',
 				'parent_post_title'  => 'Parent post title',
+				'custom'             => 'Custom',
 			),
 			'condition'   => array(
+				'dynamic_field_filter' => 'yes',
+				'filter_callback'      => array( 'jet_engine_get_attachment_file_link' ),
+			),
+		)
+	);
+
+	$widget->add_control(
+		'jet_attachment_label',
+		array(
+			'label'       => esc_html__( 'Custom label', 'jet-engine' ),
+			'type'        => \Elementor\Controls_Manager::TEXT,
+			'label_block' => true,
+			'description' => esc_html__( 'Set custom text for the attachment link', 'jet-engine' ),
+			'default'     => '',
+			'condition'   => array(
+				'jet_attachment_name'  => 'custom',
 				'dynamic_field_filter' => 'yes',
 				'filter_callback'      => array( 'jet_engine_get_attachment_file_link' ),
 			),
