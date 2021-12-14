@@ -18,7 +18,7 @@ if ( ! defined( 'WPINC' ) ) {
 
 add_filter( 'jet-engine/listings/allowed-callbacks', 'jet_engine_add_attachment_link_callback', 10, 2 );
 add_filter( 'jet-engine/listing/dynamic-field/callback-args', 'jet_engine_add_attachment_link_callback_args', 10, 3 );
-add_action( 'jet-engine/listing/dynamic-field/callback-controls', 'jet_engine_add_attachment_link_callback_controls' );
+add_filter( 'jet-engine/listings/allowed-callbacks-args', 'jet_engine_add_attachment_link_callback_controls' );
 
 function jet_engine_add_attachment_link_callback( $callbacks ) {
 	$callbacks['jet_engine_get_attachment_file_link'] = 'Get attachment file link by ID';
@@ -72,44 +72,39 @@ function jet_engine_add_attachment_link_callback_args( $args, $callback, $settin
 
 }
 
-function jet_engine_add_attachment_link_callback_controls( $widget ) {
+function jet_engine_add_attachment_link_callback_controls( $args = array() ) {
 
-	$widget->add_control(
-		'jet_attachment_name',
-		array(
-			'label'       => esc_html__( 'Display name', 'jet-engine' ),
-			'type'        => \Elementor\Controls_Manager::SELECT,
-			'label_block' => true,
-			'description' => esc_html__( 'Select attachment name format to display', 'jet-engine' ),
-			'default'     => 'file_name',
-			'options'     => array(
-				'file_name'          => 'File name',
-				'post_title'         => 'Attachment post title',
-				'current_post_title' => 'Current post title',
-				'parent_post_title'  => 'Parent post title',
-				'custom'             => 'Custom',
-			),
-			'condition'   => array(
-				'dynamic_field_filter' => 'yes',
-				'filter_callback'      => array( 'jet_engine_get_attachment_file_link' ),
-			),
-		)
+	$args['jet_attachment_name'] = array(
+		'label'       => esc_html__( 'Display name', 'jet-engine' ),
+		'type'        => 'select',
+		'label_block' => true,
+		'description' => esc_html__( 'Select attachment name format to display', 'jet-engine' ),
+		'default'     => 'file_name',
+		'options'     => array(
+			'file_name'          => 'File name',
+			'post_title'         => 'Attachment post title',
+			'current_post_title' => 'Current post title',
+			'parent_post_title'  => 'Parent post title',
+			'custom'             => 'Custom',
+		),
+		'condition'   => array(
+			'dynamic_field_filter' => 'yes',
+			'filter_callback'      => array( 'jet_engine_get_attachment_file_link' ),
+		),
 	);
 
-	$widget->add_control(
-		'jet_attachment_label',
-		array(
-			'label'       => esc_html__( 'Custom label', 'jet-engine' ),
-			'type'        => \Elementor\Controls_Manager::TEXT,
-			'label_block' => true,
-			'description' => esc_html__( 'Set custom text for the attachment link', 'jet-engine' ),
-			'default'     => '',
-			'condition'   => array(
-				'jet_attachment_name'  => 'custom',
-				'dynamic_field_filter' => 'yes',
-				'filter_callback'      => array( 'jet_engine_get_attachment_file_link' ),
-			),
-		)
+	$args['jet_attachment_label'] = array(
+		'label'       => esc_html__( 'Custom label', 'jet-engine' ),
+		'type'        => 'text',
+		'label_block' => true,
+		'description' => esc_html__( 'Set custom text for the attachment link', 'jet-engine' ),
+		'default'     => '',
+		'condition'   => array(
+			'jet_attachment_name'  => 'custom',
+			'dynamic_field_filter' => 'yes',
+			'filter_callback'      => array( 'jet_engine_get_attachment_file_link' ),
+		),
 	);
 
+	return $args;
 }
