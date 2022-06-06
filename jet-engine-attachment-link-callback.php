@@ -25,7 +25,7 @@ function jet_engine_add_attachment_link_callback( $callbacks ) {
 	return $callbacks;
 }
 
-function jet_engine_get_attachment_file_link( $attachment_id, $display_name = 'file_name', $label = '' ) {
+function jet_engine_get_attachment_file_link( $attachment_id, $display_name = 'file_name', $label = '', $is_external = '' ) {
 
 	$url = wp_get_attachment_url( $attachment_id );
 
@@ -57,7 +57,14 @@ function jet_engine_get_attachment_file_link( $attachment_id, $display_name = 'f
 			break;
 	}
 
-	return sprintf( '<a href="%1$s">%2$s</a>', $url, $name );
+	$target      = '';
+	$is_external = filter_var( $is_external, FILTER_VALIDATE_BOOLEAN );
+
+	if ( $is_external ) {
+		$target = ' target="_blank"';
+	}
+
+	return sprintf( '<a href="%1$s"%3$s>%2$s</a>', $url, $name, $target );
 
 }
 
@@ -66,6 +73,7 @@ function jet_engine_add_attachment_link_callback_args( $args, $callback, $settin
 	if ( 'jet_engine_get_attachment_file_link' === $callback ) {
 		$args[] = isset( $settings['jet_attachment_name'] ) ? $settings['jet_attachment_name'] : 'file_name';
 		$args[] = isset( $settings['jet_attachment_label'] ) ? $settings['jet_attachment_label'] : '';
+		$args[] = isset( $settings['jet_attachment_is_external'] ) ? $settings['jet_attachment_is_external'] : '';
 	}
 
 	return $args;
@@ -101,6 +109,16 @@ function jet_engine_add_attachment_link_callback_controls( $args = array() ) {
 		'default'     => '',
 		'condition'   => array(
 			'jet_attachment_name'  => 'custom',
+			'dynamic_field_filter' => 'yes',
+			'filter_callback'      => array( 'jet_engine_get_attachment_file_link' ),
+		),
+	);
+
+	$args['jet_attachment_is_external'] = array(
+		'label'       => esc_html__( 'Open in new window', 'jet-engine' ),
+		'type'        => 'switcher',
+		'default'     => '',
+		'condition'   => array(
 			'dynamic_field_filter' => 'yes',
 			'filter_callback'      => array( 'jet_engine_get_attachment_file_link' ),
 		),
