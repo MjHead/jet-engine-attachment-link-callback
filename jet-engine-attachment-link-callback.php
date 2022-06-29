@@ -126,3 +126,20 @@ function jet_engine_add_attachment_link_callback_controls( $args = array() ) {
 
 	return $args;
 }
+
+add_action( 'init', function() {
+
+	if ( ! function_exists( 'jet_engine' ) ) {
+		return;
+	}
+
+	$plugin   = plugin_basename( __FILE__ );
+	$pathinfo = pathinfo( $plugin );
+
+	jet_engine()->modules->updater->register_plugin( array(
+		'slug'    => $pathinfo['filename'],
+		'file'    => $plugin,
+		'version' => '1.1.3'
+	) );
+
+}, 12 );
