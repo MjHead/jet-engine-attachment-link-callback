@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: JetEngine - Get attachment file link by ID
- * Plugin URI: #
+ * Plugin URI:  https://github.com/MjHead/jet-engine-attachment-link-callback/
  * Description: Adds new callback to Dynamic Field widget, which allows to convert attachment file ID into attchment file link.
  * Version:     1.1.3
  * Author:      Crocoblock
